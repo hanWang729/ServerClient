@@ -88,7 +88,8 @@ int main(int argc, char const *argv[])
     while(true){
         valread = read( sock , recv_buffer, 1024);
         printf("%s\n",recv_buffer);
-        std::cin >> message;
+        // std::cin >> message;
+        std::getline(std::cin, message, ';');
         if(message == "exit"){
             shutdown(sock, SHUT_WR);
             close(sock);
