@@ -27,23 +27,7 @@ std::string exec(const char* cmd) {
 }
 
 int getPort(){
-    int port;
-    std::cout << "Please enter the port you want to listen: ";
-    std::cin >> port;
-    while(true){
-        if(std::cin.fail()){
-            std::cin.clear();
-            std::cin.sync();
-            while(std::cin.get() != '\n'){
-                continue;
-            }
-            std::cout << "Please enter the port you want to listen: ";
-            std::cin >> port;
-        }
-        else{
-            break;
-        }
-    }
+    int port = atoi(getenv("SOCKETPORT"));
     return port;
 }
 
@@ -164,13 +148,13 @@ int main(int argc, char const *argv[])
                 else{
                     std::cout << valread;
                     buffer[valread] = '\0';
-                    // send(sd , buffer , strlen(buffer) , 0 );
-                    auto returnValue = exec(buffer);
-                    memset(buffer,0,sizeof(buffer));
-                    for(int i = 0; i < returnValue.length(); i++){
-                        buffer[i] = returnValue[i];
-                    }
                     send(sd , buffer , strlen(buffer) , 0 );
+                    // auto returnValue = exec(buffer);
+                    // memset(buffer,0,sizeof(buffer));
+                    // for(int i = 0; i < returnValue.length(); i++){
+                    //     buffer[i] = returnValue[i];
+                    // }
+                    // send(sd , buffer , strlen(buffer) , 0 );
                 }
             }
             
