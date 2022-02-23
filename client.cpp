@@ -88,16 +88,13 @@ int main(int argc, char const *argv[])
     while(true){
         valread = read( sock , recv_buffer, 1024);
         printf("%s\n",recv_buffer);
-        // std::cin >> message;
         std::getline(std::cin, message, ';');
         if(message == "exit"){
             shutdown(sock, SHUT_WR);
             close(sock);
             break;
         }
-        for(int i = 0; i < message.length(); i++){
-            send_buffer[i] = message[i];
-        }
+        strcpy(send_buffer, message.c_str());
         send(sock , send_buffer , strlen(send_buffer) , 0 );
         memset(recv_buffer,0,sizeof(recv_buffer));
         memset(send_buffer,0,sizeof(send_buffer));       
