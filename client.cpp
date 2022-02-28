@@ -1,6 +1,6 @@
 // Client side C/C++ program to demonstrate Socket programming
 #include <iostream>
-#include <regex>
+// #include <regex>
 #include <stdio.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -33,21 +33,22 @@ std::string getAddress(){
     std::string addr;
     std::cout << "Please input the ip address:";
     std::cin >> addr;
-    std::regex pattern("^(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])$");
-    while(true){
-        if(!std::regex_match(addr,pattern)){
-            std::cin.clear();
-            std::cin.sync();
-            while(std::cin.get() != '\n'){
-                continue;
-            }
-            std::cout << "Please enter the port you want to listen: ";
-            std::cin >> addr;
-        }
-        else{
-            break;
-        }
-    }
+    // regex is not available in citrix because c++ version is too low
+    // std::regex pattern("^(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])$");
+    // while(true){
+    //     if(!std::regex_match(addr,pattern)){
+    //         std::cin.clear();
+    //         std::cin.sync();
+    //         while(std::cin.get() != '\n'){
+    //             continue;
+    //         }
+    //         std::cout << "Please enter the port you want to listen: ";
+    //         std::cin >> addr;
+    //     }
+    //     else{
+    //         break;
+    //     }
+    // }
     return addr;
 }
 
@@ -89,6 +90,7 @@ int main(int argc, char const *argv[])
         valread = read( sock , recv_buffer, 1024);
         printf("%s\n",recv_buffer);
         std::getline(std::cin, message, ';');
+        message.erase(message.begin()); // The first char is an unnecessary \n
         if(message == "exit"){
             shutdown(sock, SHUT_WR);
             close(sock);

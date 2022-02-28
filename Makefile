@@ -1,6 +1,6 @@
 
 CC=g++ 
-CFLAGS = -g --std=c++17 -I.
+CFLAGS = -g --std=c++11 -I.
 SOURCES=$(wildcard *.cpp)
 DEPEND := $(patsubst %.d, output/%.d, $(SOURCES:.cpp=.d))
 BINS := $(patsubst %_bin, output/%, $(SOURCES:.cpp=_bin))

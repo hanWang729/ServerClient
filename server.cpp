@@ -11,6 +11,8 @@
 #include <cstdlib>
 #include <array>
 #include <memory>
+#include <chrono>
+#include <ctime>
 #define MAX_SIZE 1024
 
 std::string exec(const char* cmd) {
@@ -111,7 +113,7 @@ int main(int argc, char const *argv[])
                 exit(EXIT_FAILURE);
             }
             //inform user of socket number - used in send and receive commands 
-            std::cout << "New connection , socket fd is " << new_socket 
+            std::cout << "[New connection] socket fd is " << new_socket 
                     << ", ip is: " << inet_ntoa(address.sin_addr)
                     << ", port: " << ntohs(address.sin_port) << std::endl;
 
@@ -120,13 +122,13 @@ int main(int argc, char const *argv[])
             {  
                 perror("send");  
             }
-            std::cout << "Hello message sent" << std::endl;
+            std::cout << "[New connection] Hello message sent" << std::endl;
             //add new socket to array of sockets
             for(int i = 0; i < max_clients; i++){
                 if( client_socket[i] == 0 )  
                 {  
                     client_socket[i] = new_socket;  
-                    printf("Adding to list of sockets as %d\n" , i);  
+                    printf("[New connection] Adding to list of sockets as %d\n" , i);  
                          
                     break;  
                 }  
@@ -136,17 +138,18 @@ int main(int argc, char const *argv[])
         for(int i = 0; i < max_clients; i++){
             auto sd = client_socket[i];
             if(FD_ISSET(sd, &readfds)){
+                getpeername(sd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
                 if((valread = read(sd, buffer, MAX_SIZE)) == 0){
                     //Somebody disconnected , get his details and print 
-                    getpeername(sd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
-                    std::cout << "Disconnected , socket fd is " << new_socket 
+                    std::cout << "[Disconnected] socket fd is " << new_socket 
                     << ", ip is: " << inet_ntoa(address.sin_addr)
                     << ", port: " << ntohs(address.sin_port) << std::endl;
                     close(sd);
                     client_socket[i] = 0;
                 }
                 else{
-                    std::cout << valread;
+                    std::cout << "[Received ip=" << inet_ntoa(address.sin_addr)<< "] ";
+                    printf("%s\n",buffer);
                     buffer[valread] = '\0';
                     send(sd , buffer , strlen(buffer) , 0 );
                     // auto returnValue = exec(buffer);
